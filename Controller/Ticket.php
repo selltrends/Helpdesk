@@ -2,41 +2,43 @@
 
 namespace Atopt\Helpdesk\Controller;
 
-abstract class Ticket extends \Magento\Framework\App\Action\Action
+use Magento\Framework\App\Action\Context;
+use Magento\Customer\Helper\Session\CurrentCustomer;
+use Magento\Framework\View\Result\PageFactory;
+
+class Ticket extends \Magento\Framework\App\Action\Action
 {
     /**
-     * Customer session
-     *
-     * @var \Magento\Customer\Model\Session
+     * @var PageFactory
      */
-    protected $customerSession;
+	
+    protected $resultPageFactory;
+    
     /**
-     * @param \Magento\Framework\App\Action\Context $context
-     * @param \Magento\Customer\Model\Session $customerSession
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
      */
+    
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Magento\Customer\Model\Session $customerSession
-    )
-    {
-        $this->customerSession = $customerSession;
-        parent::__construct($context);
+        Context $context,
+    	\Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
+        PageFactory $resultPageFactory
+    ) {
+    	$this->customerSession = $currentCustomer;
+    	parent::__construct($context);
+        $this->resultPageFactory = $resultPageFactory;
     }
+    
+    
     /**
-     * Check customer authentication for some actions
-     *
-     * @param \Magento\Framework\App\RequestInterface $request
-     * @return \Magento\Framework\App\ResponseInterface
+     * @return \Magento\Framework\View\Result\Page
      */
-    public function dispatch(\Magento\Framework\App\RequestInterface $request)
+    
+    public function execute()
     {
-        if (!$this->customerSession->authenticate()) {
-            $this->_actionFlag->set('', 'no-dispatch', true);
-            if (!$this->customerSession->getBeforeUrl()) {
-                $this->customerSession->setBeforeUrl($this->_redirect->getRefererUrl());
-            }
-        }
-        return parent::dispatch($request);
+    	$resultPage = $this->resultPageFactory->create();
+    	$block = $resultPage->getLayout()->getBlock('ticket_index');
+    	return $resultPage;
+       /* $this->_redirect('wishlist');*/
     }
 }

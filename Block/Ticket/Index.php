@@ -33,6 +33,13 @@ class Index extends \Magento\Framework\View\Element\Template
         $this->ticketFactory = $ticketFactory;
         parent::__construct($context, $data);
     }
+    
+    protected function _prepareLayout()
+    {
+    	$this->pageConfig->getTitle()->set(__('Helpdesk Tickets'));
+    	return parent::_prepareLayout();
+    }
+    
     /**
      * @return \Atopt\Helpdesk\Model\ResourceModel\Ticket\Collection
      */
@@ -43,6 +50,7 @@ class Index extends \Magento\Framework\View\Element\Template
             ->getCollection()
             ->addFieldToFilter('customer_id', $this->customerSession->getCustomerId());
     }
+    
     public function getSeverities()
     {
         return \Atopt\Helpdesk\Model\Ticket::getSeveritiesOptionArray();

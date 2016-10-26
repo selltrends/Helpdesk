@@ -2,9 +2,10 @@
 <?php /** @var $block Atopt\Helpdesk\Block\Ticket\Index */ ?>
 <?php $tickets = $block->getTickets() ?>
 <div class="atopt-helpdesk-ticket-index">
+    <h1>Hello, I'm Helpdesk Tickets!</h1>
     <form
         id="form-validate"
-        action="<?php echo $block->getUrl('atopt_helpdesk/ticket/save') ?>"
+        action="<?php echo $block->getUrl('helpdesk/ticket/save') ?>"
         method="post">
         <?php echo $block->getBlockHtml('formkey') ?>
         <fieldset class="fieldset">
