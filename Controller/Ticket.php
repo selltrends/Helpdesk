@@ -2,33 +2,27 @@
 
 namespace Atopt\Helpdesk\Controller;
 
-use Magento\Framework\App\Action\Context;
-use Magento\Customer\Model\Session;
-use Magento\Framework\View\Result\PageFactory;
-
 abstract class Ticket extends \Magento\Framework\App\Action\Action
 {
     /**
-     * @var PageFactory
+     * Customer session
+     *
+     * @var \Magento\Customer\Model\Session
      */
-	
-    protected $resultPageFactory;
-    
+    protected $customerSession;
     /**
-     * @param Context $context
-     * @param PageFactory $resultPageFactory
+     * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Customer\Model\Session $customerSession
+     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      */
-    
     public function __construct(
-        Context $context,
-    	Session $customerSession,
-        PageFactory $resultPageFactory
-    ) {
-    	$this->customerSession =$customerSession;
-    	parent::__construct($context);
-        $this->resultPageFactory = $resultPageFactory;
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Customer\Model\Session $customerSession
+    )
+    {
+        $this->customerSession = $customerSession;
+        parent::__construct($context);
     }
-    
     /**
      * Check customer authentication for some actions
      *
@@ -37,12 +31,12 @@ abstract class Ticket extends \Magento\Framework\App\Action\Action
      */
     public function dispatch(\Magento\Framework\App\RequestInterface $request)
     {
-    	if (!$this->customerSession->authenticate()) {
-    		$this->_actionFlag->set('', 'no-dispatch', true);
-    		if (!$this->customerSession->getBeforeUrl()) {
-    			$this->customerSession->setBeforeUrl($this->_redirect->getRefererUrl());
-    		}
-    	}
-    	return parent::dispatch($request);
+        if (!$this->customerSession->authenticate()) {
+            $this->_actionFlag->set('', 'no-dispatch', true);
+            if (!$this->customerSession->getBeforeUrl()) {
+                $this->customerSession->setBeforeUrl($this->_redirect->getRefererUrl());
+            }
+        }
+        return parent::dispatch($request);
     }
 }
