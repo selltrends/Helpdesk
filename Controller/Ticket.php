@@ -3,10 +3,10 @@
 namespace Atopt\Helpdesk\Controller;
 
 use Magento\Framework\App\Action\Context;
-use Magento\Customer\Helper\Session\CurrentCustomer;
+use Magento\Customer\Model\Session;
 use Magento\Framework\View\Result\PageFactory;
 
-class Ticket extends \Magento\Framework\App\Action\Action
+abstract class Ticket extends \Magento\Framework\App\Action\Action
 {
     /**
      * @var PageFactory
@@ -21,24 +21,28 @@ class Ticket extends \Magento\Framework\App\Action\Action
     
     public function __construct(
         Context $context,
-    	\Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
+    	Session $customerSession,
         PageFactory $resultPageFactory
     ) {
-    	$this->customerSession = $currentCustomer;
+    	$this->customerSession =$customerSession;
     	parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
     }
     
-    
     /**
-     * @return \Magento\Framework\View\Result\Page
+     * Check customer authentication for some actions
+     *
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @return \Magento\Framework\App\ResponseInterface
      */
-    
-    public function execute()
+    public function dispatch(\Magento\Framework\App\RequestInterface $request)
     {
-    	$resultPage = $this->resultPageFactory->create();
-    	$block = $resultPage->getLayout()->getBlock('ticket_index');
-    	return $resultPage;
-       /* $this->_redirect('wishlist');*/
+    	if (!$this->customerSession->authenticate()) {
+    		$this->_actionFlag->set('', 'no-dispatch', true);
+    		if (!$this->customerSession->getBeforeUrl()) {
+    			$this->customerSession->setBeforeUrl($this->_redirect->getRefererUrl());
+    		}
+    	}
+    	return parent::dispatch($request);
     }
 }
