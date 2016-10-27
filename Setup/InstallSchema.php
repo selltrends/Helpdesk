@@ -16,7 +16,7 @@ class InstallSchema implements InstallSchemaInterface
         $installer = $setup;
         $installer->startSetup();
         $table = $installer->getConnection()
-            ->newTable($installer->getTable('atopt_helpdesk_ticket'))
+            ->$installer->getTable('atopt_helpdesk_ticket')
             ->addColumn(
                 'ticket_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
