@@ -15,7 +15,7 @@ class Index extends \Magento\Framework\View\Element\Template
     /**
      * @var \Atopt\Helpdesk\Model\TicketFactory
      */
-    /*protected $ticketFactory;*/
+    protected $ticketFactory;
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param array $data
@@ -24,13 +24,13 @@ class Index extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Customer\Model\Session $customerSession,
-        /*\Atopt\Helpdesk\Model\TicketFactory $ticketFactory,*/
+        \Atopt\Helpdesk\Model\TicketFactory $ticketFactory,
         array $data = []
     )
     {
         $this->dateTime = $dateTime;
         $this->customerSession = $customerSession;
-        /*$this->ticketFactory = $ticketFactory;*/
+        $this->ticketFactory = $ticketFactory;
         parent::__construct($context, $data);
     }
     
@@ -45,17 +45,17 @@ class Index extends \Magento\Framework\View\Element\Template
      */
     public function getTickets()
     {
-        /*return $this->ticketFactory
+        return $this->ticketFactory
             ->create()
             ->getCollection()
             ->addFieldToFilter('customer_id', $this->customerSession->getCustomerId());
-         */
-    	return "Hello";
+         
+    	//return "Hello";
     }
     
     public function getSeverities()
     {
-        /*return \Atopt\Helpdesk\Model\Ticket::getSeveritiesOptionArray();*/
-    	return "world";
+        return \Atopt\Helpdesk\Model\Ticket::getSeveritiesOptionArray();
+    	//return "world";
     }
 }

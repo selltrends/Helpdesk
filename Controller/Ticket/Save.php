@@ -21,7 +21,8 @@ class Save extends \Atopt\Helpdesk\Controller\Ticket
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
         \Magento\Framework\Stdlib\DateTime $dateTime,
-        \Atopt\Helpdesk\Model\TicketFactory $ticketFactory
+        \Atopt\Helpdesk\Model\TicketFactory $ticketFactory,
+    	\Magento\Framework\View\Result\PageFactory $resultPageFactory
     )
     {
         $this->transportBuilder = $transportBuilder;
@@ -31,8 +32,20 @@ class Save extends \Atopt\Helpdesk\Controller\Ticket
         $this->formKeyValidator = $formKeyValidator;
         $this->dateTime = $dateTime;
         $this->ticketFactory = $ticketFactory;
-        parent::__construct($context, $customerSession);
+        $this->_customerSession = $customerSession;
+        parent::__construct($context, $customerSession, $resultPageFactory);
     }
+    
+    /**
+     * Retrieve customer session object
+     *
+     * @return \Magento\Customer\Model\Session
+     */
+    protected function _getSession()
+    {
+    	return $this->_customerSession;
+    }
+    
     public function execute()
     {
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -44,13 +57,13 @@ class Save extends \Atopt\Helpdesk\Controller\Ticket
         try {
             /* Save ticket */
             $ticket = $this->ticketFactory->create();
-            $ticket->setCustomerId($this->customerSession->getCustomerId());
+            $ticket->setCustomerId($this->_getSession()->getCustomerId());
             $ticket->setTitle($title);
             $ticket->setSeverity($severity);
             $ticket->setCreatedAt($this->dateTime->formatDate(true));
             $ticket->setStatus(\Atopt\Helpdesk\Model\Ticket::STATUS_OPENED);
             $ticket->save();
-            $customer = $this->customerSession->getCustomerData();
+            $customer = $this->_getSession()->getCustomerData();
             /* Send email to store owner */
             $storeScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
             $transport = $this->transportBuilder
